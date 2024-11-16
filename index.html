@@ -3,21 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cultural Celebration Calendar</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Inclusive Workplace Calendar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Cultural Celebration Calendar</h1>
-    <div id="calendar-container"></div>
-    <button id="openChatbot">Add Holiday</button>
-    <div id="chatbotModal" class="modal">
-        <div class="modal-content">
-            <span id="closeChatbot">&times;</span>
-            <h2>Chatbot</h2>
-            <div id="chatbox"></div>
-            <input id="userInput" type="text" placeholder="Enter holiday details..." />
-        </div>
+    <h1>Inclusive Workplace Calendar</h1>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div id="calendar-container">
+        <h2>{{ month }} {{ year }}</h2>
+        <table>
+            <tr>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+                <th>Sun</th>
+            </tr>
+            {% for week in calendar %}
+                <tr>
+                    {% for day in week %}
+                        <td {% if day != 0 %}class="day{% for holiday in holidays %}{% if holiday[0] == day %} holiday" title="{{ holiday[1] }}{% endif %}{% endfor %}"{% endif %}>
+                            {% if day != 0 %}{{ day }}{% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
     </div>
-    <script src="script.js"></script>
+
+    <h2>Add a Holiday</h2>
+    <form method="POST">
+        <input type="date" name="date" required>
+        <input type="text" name="name" placeholder="Holiday Name" required>
+        <button type="submit">Add Holiday</button>
+    </form>
 </body>
 </html>
